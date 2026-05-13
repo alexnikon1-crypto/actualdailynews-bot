@@ -1,40 +1,49 @@
-  name: news-aggregator
-  on:
-    schedule:
-      - cron: "*/30 * * * *"
-    workflow_dispatch:
-  permissions:
-    contents: write
-  concurrency:
-    group: aggregator
-    cancel-in-progress: false
-  jobs:
-    run:
-      runs-on: ubuntu-latest
-      steps:
-        - name: Checkout
-          uses: actions/checkout@v4
-        - name: Setup Python
-          uses: actions/setup-python@v5
-          with:
-            python-version: "3.11"
-            cache: "pip"
-        - name: Install dependencies
-          run: pip install -r requirements.txt
-        - name: Run aggregator
-          env:
-            GIGACHAT_AUTH: ${{ secrets.GIGACHAT_AUTH }}
-            TG_BOT_TOKEN: ${{ secrets.TG_BOT_TOKEN }}
-            TG_NEWS_CHAT_ID: ${{ secrets.TG_NEWS_CHAT_ID }}
-          run: python aggregator.py
-        - name: Commit seen.txt
-          run: |
-            git config user.name "github-actions[bot]"
-            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-            if [ -n "$(git status --porcelain seen.txt)" ]; then
-              git add seen.txt
-              git commit -m "update seen.txt [skip ci]"
-              git push
-            else
-              echo "seen.txt unchanged"
-            fi
+name: news-aggregator
+
+on:
+  schedule:
+    - cron: '*/30 * * * *'   # каждые 30 минут UTC
+  workflow_dispatch:          # позволяет запускать вручную из UI
+
+# Чтобы коммит seen.txt прошёл
+permissions:
+  contents: write
+
+concurrency:
+  group: aggregator
+  cancel-in-progress: false
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run aggregator
+        env:
+          GIGACHAT_AUTH: ${{ secrets.GIGACHAT_AUTH }}
+          TG_BOT_TOKEN: ${{ secrets.TG_BOT_TOKEN }}
+          TG_NEWS_CHAT_ID: ${{ secrets.TG_NEWS_CHAT_ID }}
+        run: python aggregator.py
+
+      - name: Commit seen.txt
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          if [ -n "$(git status --porcelain seen.txt)" ]; then
+            git add seen.txt
+            git commit -m "update seen.txt [skip ci]"
+            git push
+          else
+            echo "seen.txt unchanged — nothing to commit"
+          fi
