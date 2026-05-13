@@ -1,0 +1,43 @@
+# RSS-источники для новостного агрегатора
+# lang: ru | en — для разной обработки (en требует перевода)
+
+sources:
+  - name: РБК Финансы
+    lang: ru
+    url: https://rssexport.rbc.ru/rbcnews/news/30/full.rss
+    enabled: true
+
+  - name: Прайм
+    lang: ru
+    url: https://1prime.ru/export/rss2/index.xml
+    enabled: true
+
+  - name: Интерфакс Бизнес
+    lang: ru
+    url: https://www.interfax.ru/rss.asp
+    enabled: true
+
+  - name: Финам Conews
+    lang: ru
+    url: https://www.finam.ru/analysis/conews/rsspoint
+    enabled: true
+
+  - name: BCS Express
+    lang: ru
+    url: https://bcs-express.ru/rss/all
+    enabled: false  # включаем после теста
+
+  - name: Reuters Business
+    lang: en
+    url: https://www.reutersagency.com/feed/?best-customer-impacts=business-finance&post_type=best
+    enabled: false
+
+  - name: MarketWatch Top
+    lang: en
+    url: https://feeds.content.dowjones.io/public/rss/mw_topstories
+    enabled: false
+
+  - name: Investing.com
+    lang: en
+    url: https://www.investing.com/rss/news.rss
+    enabled: false
